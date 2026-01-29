@@ -406,6 +406,7 @@ values
    now(),
    null
   );
+
 update
 	notifications.notification_outbox
 set
