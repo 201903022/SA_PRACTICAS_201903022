@@ -1,4 +1,22 @@
--- 1) Listar ordenes con info del cliente y restaurante (join cross-schema)
+--* ) 0 
+select 'auth.roles' as table, count(*) from auth.roles
+union all select 'auth.users', count(*) from auth.users
+union all select 'auth.auth_codes', count(*) from auth.auth_codes
+union all select 'catalog.merchant_types', count(*) from catalog.merchant_types
+union all select 'catalog.restaurants', count(*) from catalog.restaurants
+union all select 'catalog.restaurant_categories', count(*) from catalog.restaurant_categories
+union all select 'catalog.restaurant_category_map', count(*) from catalog.restaurant_category_map
+union all select 'catalog.menu_item_categories', count(*) from catalog.menu_item_categories
+union all select 'catalog.menu_items', count(*) from catalog.menu_items
+union all select 'catalog.menu_item_category_map', count(*) from catalog.menu_item_category_map
+union all select 'orders.orders', count(*) from orders.orders
+union all select 'orders.order_items', count(*) from orders.order_items
+union all select 'delivery.deliveries', count(*) from delivery.deliveries
+union all select 'delivery.delivery_events', count(*) from delivery.delivery_events
+union all select 'notifications.notification_outbox', count(*) from notifications.notification_outbox;
+
+
+--* 1) Listar ordenes con info del cliente y restaurante (join cross-schema)
 SELECT
   o.id AS order_id,
   o.status,
@@ -22,8 +40,7 @@ ORDER BY o.created_at DESC
 LIMIT 50;
 
 
--- 2) Detalle completo de una orden (cabecera + items, con precios y totales)
--- Cambia el UUID por el que quieras consultar.
+--*  2) Detalle completo de una orden (cabecera + items, con precios y totales)
 SELECT
   o.id AS order_id,
   o.status,
@@ -42,7 +59,7 @@ WHERE o.id = '30303030-3030-3030-3030-303030303030'
 ORDER BY oi.id;
 
 
--- 3) Top restaurantes por ventas (sumatoria de ordenes no canceladas/rechazadas)
+--*  3) Top restaurantes por ventas (sumatoria de ordenes no canceladas/rechazadas)
 SELECT
   r.id AS restaurant_id,
   r.name AS restaurant_name,
@@ -57,7 +74,7 @@ ORDER BY total_sales DESC
 LIMIT 10;
 
 
--- 4) Items mas vendidos (por cantidad) por restaurante (usa snapshots)
+--*  4) Items mas vendidos (por cantidad) por restaurante (usa snapshots)
 SELECT
   r.name AS restaurant_name,
   oi.item_name_snapshot,
@@ -74,7 +91,7 @@ ORDER BY total_units_sold DESC
 LIMIT 20;
 
 
--- 5) Estado de notificaciones (outbox) por usuario: pendientes/fallidas por email
+--*  5) Estado de notificaciones (outbox) por usuario: pendientes/fallidas por email
 SELECT
   u.email,
   COUNT(*) FILTER (WHERE n.status = 'PENDING') AS pending_count,
