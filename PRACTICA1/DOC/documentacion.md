@@ -141,3 +141,18 @@
 * **RNF-06.1** El sistema debe minimizar dependencias entre microservicios para evitar cuellos de botella (por ejemplo, evitando consultas directas entre bases de datos y usando referencias por ID y “snapshots” cuando sea necesario).
 * **RNF-06.2** Cada microservicio debe poder escalar su persistencia de manera independiente (base de datos/esquema por servicio), sin requerir cambios en otros servicios.
 
+## Diagrama de Arquitectura de Alto nivel
+
+![Diagrama de Arquitectura de Alto nivel ](../img/Diagrama_de_arquitectura.png)
+
+## Diagrama de Deslpiegue
+
+![Diagrama de despligue](../img/DiagramaDeDespliegue.png)
+
+## Diagrama Entidad Relacion (ER)
+
+![Diagrama ER](../DOC/db/design/DiagramER.png)
+
+## Database
+
+**BMS**: Postgres
