@@ -2,16 +2,21 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller()
-export class AuthServiceController {
-  @GrpcMethod('AuthService', 'ValidateToken')
-  validateToken(data: { token: string }) {
-    // DEMO: valida si el token no esta vacio
-    const valid = !!data?.token && data.token.length > 10;
+export class AuthController {
+  @GrpcMethod('AuthService', 'Validate')
+  Validate(data: { access_token: string }) {
+    const valid = !!data?.access_token && data.access_token.length > 10;
 
     return {
       valid,
-      userId: valid ? 'user-123' : '',
-      role: valid ? 'CUSTOMER' : '',
+      user: valid
+        ? {
+            id: 'user-123',
+            email: 'demo@example.com',
+            role: 'CUSTOMER',
+            name: 'Demo',
+          }
+        : { id: '', email: '', role: '', name: '' },
     };
   }
 }

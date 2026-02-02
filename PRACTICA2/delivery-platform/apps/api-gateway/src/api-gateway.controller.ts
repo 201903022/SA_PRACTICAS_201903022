@@ -1,17 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 
 @Controller()
 export class ApiGatewayController {
-  constructor(private readonly apiGatewayService: ApiGatewayService) {}
+  constructor(private readonly svc: ApiGatewayService) {}
 
-  @Get()
-  getHello(): string {
-    return this.apiGatewayService.getHello();
-  }
-
-  @Get('health')
-  getHealth(): string {
-    return 'OK';
+  @Get('auth/validate')
+  validate(@Query('token') token: string) {
+    return this.svc.validate(token ?? '');
   }
 }
