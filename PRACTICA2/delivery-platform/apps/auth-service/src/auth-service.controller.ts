@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
-import { AuthServiceService } from './auth-service.service';
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller()
 export class AuthServiceController {
-  constructor(private readonly authServiceService: AuthServiceService) {}
+  @GrpcMethod('AuthService', 'ValidateToken')
+  validateToken(data: { token: string }) {
+    // DEMO: valida si el token no esta vacio
+    const valid = !!data?.token && data.token.length > 10;
 
-  @Get()
-  getHello(): string {
-    return this.authServiceService.getHello();
+    return {
+      valid,
+      userId: valid ? 'user-123' : '',
+      role: valid ? 'CUSTOMER' : '',
+    };
   }
 }
