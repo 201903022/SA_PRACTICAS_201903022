@@ -10,7 +10,7 @@
     "start": "nest start",
     "start:dev": "nest start api-gateway --watch",
     "start:dev:gateway": "nest start api-gateway --watch --preserveWatchOutput",
-    "start:dev:auth": "nest start auth-service --watch --preserveWatchOutput & npm run watch-protos",
+    "start:dev:auth": "concurrently \"nest start auth-service --watch --preserveWatchOutput\" \"npm run watch-protos\"",
     "build": "nest build",
     "build:gateway": "nest build api-gateway",
     "build:auth": "nest build auth-service && npm run copy-protos",

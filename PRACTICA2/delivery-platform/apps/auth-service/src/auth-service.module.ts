@@ -4,6 +4,7 @@ import { AuthServiceService } from './auth-service.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthController } from './health.controller';
 import { ConfigModule } from '@nestjs/config';
+import { BcryptService } from './bycrypt/bycrypt.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -13,6 +14,6 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
   ],
   controllers: [AuthController, HealthController],
-  providers: [AuthServiceService],
+  providers: [AuthServiceService, BcryptService],
 })
 export class AuthServiceModule {}

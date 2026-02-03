@@ -5,6 +5,13 @@ import { lastValueFrom } from 'rxjs';
 type AuthGrpcService = {
   Validate(data: { access_token: string }): any; // coincide con proto
   Login(data: { email: string; password: string }): any;
+  Register(data: {
+    name: string;
+    phone_number: string;
+    email: string;
+    password: string;
+    role: string;
+  }): any;
 };
 
 @Injectable()
@@ -23,5 +30,23 @@ export class ApiGatewayService implements OnModuleInit {
 
   async login(email: string, password: string) {
     return lastValueFrom(this.auth.Login({ email, password }));
+  }
+
+  async register(
+    name: string,
+    phoneNumber: string,
+    email: string,
+    password: string,
+    role: string,
+  ) {
+    return lastValueFrom(
+      this.auth.Register({
+        name,
+        phone_number: phoneNumber,
+        email,
+        password,
+        role,
+      }),
+    );
   }
 }
