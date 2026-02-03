@@ -17,10 +17,12 @@ async function bootstrap() {
         package: 'auth',
         // Subimos un nivel desde 'src' para encontrar la carpeta 'proto' en dist
         protoPath: protoPath,
-        url: '0.0.0.0:50051',
+        url: '127.0.0.1:50051',
       },
     },
   );
+
+  app.enableShutdownHooks();
 
   await app.listen();
   console.log('Auth Microservice is running on port 50051');
