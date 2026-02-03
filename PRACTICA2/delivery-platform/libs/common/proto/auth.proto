@@ -10,10 +10,10 @@ service AuthService {
 }
 
 message RegisterRequest {
-  string email = 1;
-  string password = 2;
-  string name = 3; 
-  string phone_number = 4;
+  string name = 1;
+  string phone_number = 2; // DEBE ser idéntico al JSON
+  string email = 3;
+  string password = 4;
   string role = 5;
 }
 

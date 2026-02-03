@@ -1,14 +1,21 @@
-import { IsEnum, IsNotEmpty, IsString, Matches } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer'; // <--- Importar esto
 import { Roles } from '../enums/roles.enum';
+
 export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  phone_number: string;
+  phone_number?: string;
 
   @IsString()
   @IsNotEmpty()

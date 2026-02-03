@@ -13,9 +13,11 @@ import { AuthController } from './auth/auth.controller';
         transport: Transport.GRPC,
         options: {
           package: 'auth',
-          // Usamos process.cwd() para apuntar a la raíz del monorepo en desarrollo
           protoPath: join(process.cwd(), 'libs/common/proto/auth.proto'),
-          url: 'localhost:50051', // Asegúrate de que coincida con el puerto del microservicio
+          url: 'localhost:50051',
+          loader: {
+            keepCase: true,
+          },
         },
       },
     ]),

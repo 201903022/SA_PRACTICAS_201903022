@@ -1,8 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiGatewayService } from '../api-gateway.service';
-import { LoginDto } from '../dto/login.dto';
-import { RegisterDto } from '../dto/register.dto';
-
+import { LoginDto, RegisterDto } from 'libs/common/dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: ApiGatewayService) {}
@@ -23,14 +21,15 @@ export class AuthController {
 
   @Post('register1')
   async register(@Body() body: RegisterDto) {
-    const { name, phone_number, email, password, role } = body;
-
-    return await this.authService.register(
-      name,
-      phone_number,
-      email,
-      password,
-      role,
-    );
+    const payload = {
+      name: body.name,
+      phone_number: body.phone_number ?? body.phoneNumber, // clave exacta
+      email: body.email,
+      password: body.password,
+      role: body.role,
+    };
+    console.log('----------Payload----------');
+    console.log(payload);
+    return await this.authService.register(payload);
   }
 }
