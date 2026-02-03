@@ -8,15 +8,13 @@ import { join } from 'path';
   imports: [
     ClientsModule.register([
       {
-        name: 'AUTH_GRPC',
+        name: 'AUTH_PACKAGE',
         transport: Transport.GRPC,
         options: {
           package: 'auth',
-          protoPath: join(
-            process.cwd(),
-            'dist/apps/auth-service/proto/auth.proto',
-          ),
-          url: 'localhost:50051',
+          // Usamos process.cwd() para apuntar a la raíz del monorepo en desarrollo
+          protoPath: join(process.cwd(), 'libs/common/proto/auth.proto'),
+          url: 'localhost:50051', // Asegúrate de que coincida con el puerto del microservicio
         },
       },
     ]),

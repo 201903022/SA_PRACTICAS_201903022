@@ -10,7 +10,7 @@ type AuthGrpcService = {
 export class ApiGatewayService implements OnModuleInit {
   private auth!: AuthGrpcService;
 
-  constructor(@Inject('AUTH_GRPC') private readonly client: ClientGrpc) {}
+  constructor(@Inject('AUTH_PACKAGE') private readonly client: ClientGrpc) {}
 
   onModuleInit() {
     this.auth = this.client.getService<AuthGrpcService>('AuthService');
