@@ -3,14 +3,14 @@ import { ApiGatewayModule } from './api-gateway.module';
 import { ValidationPipe } from '@nestjs/common';
 
 import { HyperRpcExceptionFilter } from './common/rpc-exception.filter';
+import { GrpcToHttpInterceptor } from './common/grpc-to-http.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
   app.setGlobalPrefix('api-gateway');
 
-  // Activar filtro global de excepciones RPC
+  app.useGlobalInterceptors(new GrpcToHttpInterceptor());
   app.useGlobalFilters(new HyperRpcExceptionFilter());
-  // Activar validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

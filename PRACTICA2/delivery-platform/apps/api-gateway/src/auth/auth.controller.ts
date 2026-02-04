@@ -12,10 +12,8 @@ export class AuthController {
 
   @Post('login1')
   async login(@Body() body: LoginDto) {
-    // Extraemos email y password del cuerpo de la petición HTTP
     const { email, password } = body;
-
-    // Llamamos al método login de tu ApiGatewayService
+    // * Llamamos al método login la ApiGatewayService
     return this.authService.login(email, password);
   }
 
@@ -23,7 +21,7 @@ export class AuthController {
   async register(@Body() body: RegisterDto) {
     const payload = {
       name: body.name,
-      phone_number: body.phone_number, // clave exacta
+      phone_number: body.phone_number,
       email: body.email,
       password: body.password,
       role: body.role,
