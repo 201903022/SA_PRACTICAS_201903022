@@ -10,11 +10,10 @@ import { existsSync } from 'fs';
 import { AuthServiceModule } from './auth-service.module';
 
 function resolveProtoPath() {
-  // 1) si existe el proto en dist (produccion / build), usa __dirname
+  // ! 1) si existe el proto en dist (produccion / build), usa __dirname
   const distProto = join(__dirname, '../proto/auth.proto');
   if (existsSync(distProto)) return distProto;
 
-  // 2) si no, usa el del repo (dev)
   const devProto = join(process.cwd(), 'libs/common/proto/auth.proto');
   return devProto;
 }
@@ -22,8 +21,6 @@ function resolveProtoPath() {
 async function bootstrap() {
   const protoPath = resolveProtoPath();
 
-  // gRPC URL desde env (validado por Joi en ConfigModule)
-  // fallback: 0.0.0.0 para que acepte conexiones externas (si lo necesitas)
   const grpcUrl = process.env.AUTH_SERVICE_GRPC_URL ?? '0.0.0.0:50051';
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -51,10 +48,8 @@ async function bootstrap() {
         console.log(JSON.stringify(errors, null, 2));
 
         return new RpcException({
-          code: 3, // INVALID_ARGUMENT
+          code: 3, // ! INVALID_ARGUMENT
           message: 'Validation failed',
-          // opcional: mandar detalle sin exponer demasiado
-          // details: errors
         });
       },
     }),

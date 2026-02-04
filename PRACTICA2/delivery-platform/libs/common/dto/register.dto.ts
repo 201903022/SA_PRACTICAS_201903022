@@ -35,7 +35,7 @@ export class RegisterDto {
       : (value as string);
   })
   @IsEnum(Roles, {
-    message: `Role must be one of the following values: ${Object.values(Roles).join(', ')}`,
+    message: `Ivalide role value.  `,
   })
   @IsNotEmpty()
   role: Roles = Roles.CUSTOMER;

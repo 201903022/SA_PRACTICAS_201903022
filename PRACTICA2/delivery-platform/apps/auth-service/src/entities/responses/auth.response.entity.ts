@@ -1,4 +1,4 @@
-import { UserData } from '../../interfaces/userData.interface';
+import { UserData } from '../../interfaces/user.data.interface';
 import { UserResponse } from './user.response.entity';
 
 export class AuthResponse {

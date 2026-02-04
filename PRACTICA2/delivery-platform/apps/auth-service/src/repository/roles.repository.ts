@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class RolesRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findeOnByRole(role: string) {
+  async findOneByRole(role: string) {
     console.log('Rol a comparar:');
     console.log(role);
     const role2 = await this.prismaService.roles.findUnique({
@@ -20,5 +20,16 @@ export class RolesRepository {
         code: role,
       },
     });
+  }
+
+  async findOneById(id: string) {
+    const role = await this.prismaService.roles.findUnique({
+      where: { id: id },
+    });
+
+    if (!role) {
+      throw new Error('Role not found');
+    }
+    return role;
   }
 }

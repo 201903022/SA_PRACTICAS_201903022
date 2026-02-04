@@ -1,4 +1,4 @@
-import { UserData } from '../../interfaces/userData.interface';
+import { UserData } from '../../interfaces/user.data.interface';
 
 export class UserResponse {
   id: string;
