@@ -1,6 +1,5 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
-import { BcryptService } from './bycrypt/bycrypt.service';
 
 import {
   AuthResponse,
@@ -9,9 +8,10 @@ import {
 } from './entities/responses';
 import { ValidateRequest } from './entities/requests';
 import { LoginDto, RegisterDto } from 'libs/common/dto';
+import { AuthServiceService } from './auth-service.service';
 @Controller()
 export class AuthController {
-  constructor(private readonly bycryptService: BcryptService) {}
+  constructor(private readonly authService: AuthServiceService) {}
   @GrpcMethod('AuthService', 'Validate')
   Validate(data: ValidateRequest) {
     const valid = !!data?.access_token && data.access_token.length > 10;
@@ -53,16 +53,7 @@ export class AuthController {
       console.log('--- PETICIÓN RECIBIDA EN AUTH ---');
       console.log('Data:', data);
       console.log('LLEGÓ AL CONTROLADOR DE AUTH:', data);
-      const password_hash = await this.bycryptService.hash(data.password);
-
-      console.log(`Hashed: ${password_hash}`);
-
-      return new AuthResponse('access_token_example', 'refresh_token_example', {
-        id: 'user-123',
-        email: data.email,
-        name: data.name,
-        role: data.role,
-      });
+      return this.authService.registerUser(data);
     } catch (error) {
       console.error('Error en Register:', error);
       throw new RpcException({

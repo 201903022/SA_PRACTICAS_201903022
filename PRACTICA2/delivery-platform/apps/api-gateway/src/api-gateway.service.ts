@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import type { ClientGrpc } from '@nestjs/microservices';
+import { RpcException, type ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { AuthGrpcService, RegisterRequest } from './types';
 
@@ -21,24 +21,15 @@ export class ApiGatewayService implements OnModuleInit {
     return lastValueFrom(this.auth.Login({ email, password }));
   }
 
-  async register(data: {
-    name: string;
-    phone_number?: string;
-    email: string;
-    password: string;
-    role: string;
-  }) {
-    const payload: RegisterRequest = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-    };
-
-    if (data.phone_number) {
-      payload.phone_number = data.phone_number;
+  async register(data: RegisterRequest) {
+    try {
+      return await lastValueFrom(this.auth.Register(data));
+    } catch (error) {
+      // error suele venir como: { code: 6, details: "Email already in use", ... }
+      throw new RpcException({
+        code: error.code || 13,
+        message: error.details || error.message || 'Internal Server Error',
+      });
     }
-
-    return lastValueFrom(this.auth.Register(payload));
   }
 }
