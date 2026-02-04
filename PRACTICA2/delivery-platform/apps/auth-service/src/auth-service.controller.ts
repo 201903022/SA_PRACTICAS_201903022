@@ -55,7 +55,6 @@ export class AuthController {
       console.log('LLEGÓ AL CONTROLADOR DE AUTH:', data);
       const password_hash = await this.bycryptService.hash(data.password);
 
-      // Log para depurar
       console.log(`Hashed: ${password_hash}`);
 
       return new AuthResponse('access_token_example', 'refresh_token_example', {
@@ -66,7 +65,6 @@ export class AuthController {
       });
     } catch (error) {
       console.error('Error en Register:', error);
-      // IMPORTANTE: Lanza una RpcException para que el Gateway reciba un error claro
       throw new RpcException({
         code: 13, // Internal
         details: 'Error al procesar el registro del usuario',

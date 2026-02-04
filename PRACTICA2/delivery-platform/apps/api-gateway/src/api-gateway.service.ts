@@ -1,20 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import type { ClientGrpc } from '@nestjs/microservices'; // <-- IMPORT TYPE
+import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-
-type AuthGrpcService = {
-  Validate(data: { access_token: string }): any; // coincide con proto
-  Login(data: { email: string; password: string }): any;
-  Register(data: RegisterRequest): any;
-};
-
-type RegisterRequest = {
-  name: string;
-  phone_number?: string;
-  email: string;
-  password: string;
-  role: string;
-};
+import { AuthGrpcService, RegisterRequest } from './types';
 
 @Injectable()
 export class ApiGatewayService implements OnModuleInit {

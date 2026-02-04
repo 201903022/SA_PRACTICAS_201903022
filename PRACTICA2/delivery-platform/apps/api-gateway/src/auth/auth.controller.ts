@@ -23,7 +23,7 @@ export class AuthController {
   async register(@Body() body: RegisterDto) {
     const payload = {
       name: body.name,
-      phone_number: body.phone_number ?? body.phoneNumber, // clave exacta
+      phone_number: body.phone_number, // clave exacta
       email: body.email,
       password: body.password,
       role: body.role,
