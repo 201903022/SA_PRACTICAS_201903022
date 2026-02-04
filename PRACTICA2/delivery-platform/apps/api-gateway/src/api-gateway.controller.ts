@@ -1,12 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 
-@Controller()
+@Controller('api-gateway')
 export class ApiGatewayController {
-  constructor(private readonly apiGatewayService: ApiGatewayService) {}
-
-  @Get()
-  getHello(): string {
-    return this.apiGatewayService.getHello();
-  }
+  constructor(private readonly svc: ApiGatewayService) {}
 }

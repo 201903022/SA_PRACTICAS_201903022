@@ -1,10 +1,33 @@
 import { Module } from '@nestjs/common';
-import { AuthServiceController } from './auth-service.controller';
+import { ConfigModule } from '@nestjs/config';
+import { AuthController } from './auth-service.controller';
 import { AuthServiceService } from './auth-service.service';
-
+import { PrismaModule } from './prisma/prisma.module';
+import { HealthController } from './health.controller';
+import { BcryptService } from './bycrypt/bycrypt.service';
+import { EnvConfig } from './config/app.config';
+import { JoiValidationSchema } from './config/joi.validation';
+import { UsersRepository } from './repository/users.repository';
+import { RolesRepository } from './repository/roles.repository';
 @Module({
-  imports: [],
-  controllers: [AuthServiceController],
-  providers: [AuthServiceService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['apps/auth-service/.env', '.env'],
+      load: [EnvConfig],
+      validationSchema: JoiValidationSchema,
+      validationOptions: {
+        abortEarly: true,
+      },
+    }),
+    PrismaModule,
+  ],
+  controllers: [AuthController, HealthController],
+  providers: [
+    AuthServiceService,
+    BcryptService,
+    UsersRepository,
+    RolesRepository,
+  ],
 })
 export class AuthServiceModule {}

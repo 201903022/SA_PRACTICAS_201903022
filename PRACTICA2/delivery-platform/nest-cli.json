@@ -17,7 +17,15 @@
       "entryFile": "main",
       "sourceRoot": "apps/api-gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "../../libs/common/proto/*.proto",
+            "outDir": "dist/apps/api-gateway/proto",
+            "watchAssets": true,
+            "flat": true
+          }
+        ]
       }
     },
     "auth-service": {
@@ -26,6 +34,14 @@
       "entryFile": "main",
       "sourceRoot": "apps/auth-service/src",
       "compilerOptions": {
+        "assets": [
+          {
+            "include": "../../libs/common/proto/*.proto",
+            "outDir": "dist/apps/auth-service/proto",
+            "flat": true,
+            "watchAssets": true
+          }
+        ],
         "tsConfigPath": "apps/auth-service/tsconfig.app.json"
       }
     },
