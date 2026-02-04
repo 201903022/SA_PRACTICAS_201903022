@@ -13,8 +13,8 @@ export class ApiGatewayService implements OnModuleInit {
     this.auth = this.client.getService<AuthGrpcService>('AuthService');
   }
 
-  async validate(accessToken: string) {
-    return lastValueFrom(this.auth.Validate({ access_token: accessToken }));
+  async validate(access_token: string) {
+    return lastValueFrom(this.auth.Validate({ access_token }));
   }
 
   async login(email: string, password: string) {

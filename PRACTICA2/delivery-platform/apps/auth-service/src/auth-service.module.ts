@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth-service.controller';
 import { AuthServiceService } from './auth-service.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -9,6 +9,7 @@ import { EnvConfig } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { UsersRepository } from './repository/users.repository';
 import { RolesRepository } from './repository/roles.repository';
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,6 +22,21 @@ import { RolesRepository } from './repository/roles.repository';
       },
     }),
     PrismaModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_ACCESS_SECRET');
+        const expiresIn = configService.get<string>('JWT_ACCESS_TTL');
+
+        return {
+          secret: secret,
+          signOptions: {
+            expiresIn: expiresIn as never,
+          },
+        };
+      },
+    }),
   ],
   controllers: [AuthController, HealthController],
   providers: [
