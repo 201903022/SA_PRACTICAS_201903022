@@ -1,25 +1,26 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 
-import { UserResponse, ValidateResponse } from './entities/responses';
-import { ValidateRequest } from './entities/requests';
 import { LoginDto, RegisterDto } from 'libs/common/dto';
 import { AuthServiceService } from './auth-service.service';
+import { ValidateDto } from 'libs/common/dto/validate.dto';
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthServiceService) {}
   @GrpcMethod('AuthService', 'Validate')
-  Validate(data: ValidateRequest) {
-    const valid = !!data?.access_token && data.access_token.length > 10;
-    const userResponseValid = valid
-      ? new UserResponse({
-          id: 'user-123',
-          email: 'demo@example.com',
-          role: 'CUSTOMER',
-          name: 'Demo',
-        })
-      : new UserResponse({ id: '', email: '', role: 'GUEST', name: 'Guest' });
-    return new ValidateResponse(valid, userResponseValid);
+  Validate(data: ValidateDto) {
+    console.log('-------Validate TOken--------');
+    try {
+      console.log('El token a validar es:', data.access_token);
+      const valid = this.authService.validateToken(data.access_token);
+      return valid;
+    } catch (error) {
+      console.error('Error en Validate:', error);
+      throw new RpcException({
+        code: 13,
+        details: 'Error al validar el token',
+      });
+    }
   }
 
   @GrpcMethod('AuthService', 'GetPublicKey')

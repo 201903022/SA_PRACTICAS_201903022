@@ -6,8 +6,11 @@ export class AuthController {
   constructor(private readonly authService: ApiGatewayService) {}
 
   @Get('validate1')
-  validate(@Query('token') token: string) {
-    return this.authService.validate(token ?? '');
+  validate(@Query('token') access_token: string) {
+    console.log('Funcion validar token');
+    console.log('Token');
+    console.log(access_token);
+    return this.authService.validate(access_token ?? '');
   }
 
   @Post('login1')
