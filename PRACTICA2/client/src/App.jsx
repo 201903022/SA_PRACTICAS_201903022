@@ -9,6 +9,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import RegisterCompany from "./pages/admin/RegisterCompany";
 import RegisterDelivery from "./pages/admin/RegisterDelivery";
+import DriverDashboard from "./pages/driver/DriverDashboard";
+import MerchantDashboard from "./pages/merchant/MerchantDashboard";
 
 function App() {
   return (
@@ -54,7 +56,11 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Aquí irán /login y /register */}
+        {/* Rutas de Repartidor (Driver) */}
+          <Route path="/driver/orders" element={<DriverDashboard />} />
+
+          {/* Rutas de Empresas (Merchant) */}
+          <Route path="/merchant/store" element={<MerchantDashboard />} />
       </Routes>
     </BrowserRouter>
   );

@@ -7,6 +7,7 @@ import { ApiGatewayService } from './api-gateway.service';
 import { join } from 'path';
 import { EnvConfig } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.vaidation';
+import { AdminController } from './admin/admin.controller';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { JoiValidationSchema } from './config/joi.vaidation';
     ]),
   ],
   // ... controllers y providers
-  controllers: [ApiGatewayController, AuthController],
+  controllers: [ApiGatewayController, AuthController, AdminController],
 
   providers: [ApiGatewayService],
 })

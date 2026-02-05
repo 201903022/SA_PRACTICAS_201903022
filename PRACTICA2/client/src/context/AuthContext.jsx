@@ -21,8 +21,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, tokens) => {
-    storage.setToken("access_token", tokens.accessToken, 1);
-    storage.setToken("refresh_token", tokens.refreshToken, 7);
+    storage.setToken("access_token", tokens.access_token, 1);
+    storage.setToken("refresh_token", tokens.refresh_token, 7);
     storage.setToken("user", JSON.stringify(userData));
     setUser(userData);
   };

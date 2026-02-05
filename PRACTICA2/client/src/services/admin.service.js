@@ -1,27 +1,30 @@
 // Añade esto a auth.service.js
-import axios from 'axios';
+import api from '../api/axios';
 
-const API_URL = import.meta.env.VITE_API_URL;
 
-export const registerDelivery = async (data) => {
-  const API_URL = import.meta.env.VITE_API_URL;
+export const registerDelivery = async (deliveryData) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/register`, {
-      ...data,
-      role: 'DELIVERY' // Forzamos el rol
+    // Fíjate que la URL coincide con tu @Post('register/delivery')
+    const response = await api.post('auth/admin/register/delivery', {
+      name: deliveryData.name,
+      email: deliveryData.email,
+      phone_number: deliveryData.phone, // Ajustado al DTO del backend
+      password: deliveryData.password,
+      role: 'DRIVER' 
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error al registrar repartidor');
+    console.log('Hubo un error en registrar delivery',error)
+    const message = error.response?.data?.message || 'Error al registrar repartidor';
+    throw new Error(message);
   }
 };
-
 export const registerCompany = async (data) => {
   const API_URL = import.meta.env.VITE_API_URL;
   try {
-    const response = await axios.post(`${API_URL}/auth/register`, {
+    const response = await api.post(`/auth/admin/register/merchant`, {
       ...data,
-      role: 'COMPANY' // Forzamos el rol
+      role: 'MERCHANT' // Forzamos el rol
     });
     return response.data;
   } catch (error) {
