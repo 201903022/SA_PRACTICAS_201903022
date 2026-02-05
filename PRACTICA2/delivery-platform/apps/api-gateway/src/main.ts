@@ -8,7 +8,13 @@ import { GrpcToHttpInterceptor } from './common/grpc-to-http.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
   app.setGlobalPrefix('api-gateway');
-
+  //habilitar cors
+  app.enableCors({
+    origin: true, // permite cualquier origen (ok para dev)
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   app.useGlobalInterceptors(new GrpcToHttpInterceptor());
   app.useGlobalFilters(new HyperRpcExceptionFilter());
   app.useGlobalPipes(
