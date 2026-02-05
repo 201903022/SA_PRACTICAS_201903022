@@ -13,14 +13,14 @@ export class AuthController {
     return this.authService.validate(access_token ?? '');
   }
 
-  @Post('login1')
+  @Post('login')
   async login(@Body() body: LoginDto) {
     const { email, password } = body;
     // * Llamamos al método login la ApiGatewayService
     return this.authService.login(email, password);
   }
 
-  @Post('register1')
+  @Post('register')
   async register(@Body() body: RegisterDto) {
     const payload = {
       name: body.name,
