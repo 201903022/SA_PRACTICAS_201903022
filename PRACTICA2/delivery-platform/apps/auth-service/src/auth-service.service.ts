@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtDto } from 'libs/common/dto/jwt.dto';
 import { ConfigService } from '@nestjs/config';
 import { AccessTokenPayload } from './interfaces/acces-token.payload';
+import { Roles } from 'libs/common/enums/roles.enum';
 
 @Injectable()
 export class AuthServiceService {
@@ -24,6 +25,10 @@ export class AuthServiceService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
+
+  async onModuleInit() {
+    await this.seedAdmin();
+  }
   getHello(): string {
     return 'Hello World!';
   }
@@ -152,5 +157,36 @@ export class AuthServiceService {
         name: newUser.name,
       },
     };
+  }
+
+  private async seedAdmin() {
+    try {
+      const adminEmail =
+        this.configService.get<string>('ADMIN_EMAIL') ?? 'email';
+      const adminPassword =
+        this.configService.get<string>('ADMIN_PASSWORD') ?? 'password';
+      const adminName = this.configService.get<string>('ADMIN_NAME') ?? 'Admin';
+
+      const existingAdmin = await this.usersRepo.findByEmail(adminEmail);
+      if (existingAdmin) {
+        return; // El admin ya existe, no hacer nada
+      }
+      const adminRole = await this.rolesRepo.findOneByRole(Roles.ADMIN);
+      if (!adminRole) {
+        throw new Error('Admin role not found');
+      }
+      const hashedPassword = await this.encrcyptService.hash(adminPassword);
+      console.log('Datos de admin a guardar');
+      console.log({ adminEmail, adminName, adminRole: adminRole.code });
+      await this.usersRepo.create({
+        name: adminName,
+        email: adminEmail,
+        passwordHash: hashedPassword,
+        roleId: adminRole.id,
+        phone_Number: '0000000000',
+      });
+    } catch (error) {
+      console.error('Error seeding admin user:', error);
+    }
   }
 }

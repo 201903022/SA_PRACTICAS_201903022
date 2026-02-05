@@ -1,5 +1,3 @@
--- 1. CREACIÓN DE LA FUNCIÓN PARA UPDATED_AT
--- (Indispensable para que tus triggers no fallen)
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -8,9 +6,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. CREACIÓN DEL TIPO ENUM
--- (Necesario para la tabla auth_codes)
--- 3) Enums
 DO $$ BEGIN
   CREATE TYPE public.auth_code_type AS ENUM (
     'EMAIL_VERIFICATION',
@@ -19,7 +14,7 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
--- 3. TABLA ROLES
+
 CREATE TABLE IF NOT EXISTS roles (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid (),
     code varchar(30) NOT NULL UNIQUE,
@@ -29,14 +24,12 @@ CREATE TABLE IF NOT EXISTS roles (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
--- Trigger para roles
 DROP TRIGGER IF EXISTS trg_auth_roles_updated_at ON roles;
 
 CREATE TRIGGER trg_auth_roles_updated_at
 BEFORE UPDATE ON roles
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
--- 4. TABLA USERS
 CREATE TABLE IF NOT EXISTS users (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid (),
     email varchar(320) NOT NULL UNIQUE,
@@ -51,14 +44,12 @@ CREATE TABLE IF NOT EXISTS users (
     CONSTRAINT fk_auth_users_role FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE RESTRICT
 );
 
--- Trigger para users
 DROP TRIGGER IF EXISTS trg_auth_users_updated_at ON users;
 
 CREATE TRIGGER trg_auth_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
--- 5. TABLA AUTH_CODES
 CREATE TABLE IF NOT EXISTS auth_codes (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid (),
     user_id uuid NOT NULL,
@@ -76,7 +67,6 @@ CREATE TABLE IF NOT EXISTS auth_codes (
     CONSTRAINT chk_auth_codes_attempts_le_max CHECK (attempts <= max_attempts)
 );
 
--- Índices optimizados
 CREATE INDEX IF NOT EXISTS idx_auth_codes_user_id ON auth_codes (user_id);
 
 CREATE INDEX IF NOT EXISTS idx_auth_codes_type_status ON auth_codes(type, used_at) WHERE used_at IS NULL;
