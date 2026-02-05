@@ -83,4 +83,36 @@ En NestJS, los **Guards** son una capa de seguridad que se ejecuta **antes** del
 2. `RolesGuard` valida el rol.
 3. Si ambos pasan, se ejecuta el endpoint.
 
+## Frontend (lado cliente)
+
+### Tecnologias utilizadas: React + Vite
+
+El frontend fue desarrollado con **React** para construir la interfaz de usuario y **Vite** como herramienta de desarrollo y build, logrando una aplicacion moderna, rapida y facil de mantener.
+
+---
+
+### Justificacion de React
+
+Se eligio **React** porque permite construir interfaces dinamicas mediante una arquitectura basada en componentes, lo cual mejora la organizacion y reutilizacion del codigo.
+
+Principales razones:
+
+- **Componentes reutilizables** (UI consistente y menos duplicacion)
+- **Manejo eficiente del estado** y renderizado reactivo
+- **Escalabilidad** para crecer en pantallas, modulos y funcionalidades
+- **Ecosistema amplio** (rutas, formularios, validaciones, consumo de APIs)
+- **Facil mantenimiento** al separar UI en piezas pequenas y claras
+
+---
+
+### Justificacion de Vite
+
+Se eligio **Vite** para acelerar el desarrollo y simplificar la construccion del proyecto en produccion.
+
+Ventajas principales:
+
+- **Servidor de desarrollo rapido** (arranque casi inmediato)
+- **Recarga en caliente (HMR)** para ver cambios al instante
+- **Configuracion simple** y menos friccion en el setup
+- **Build optimizado** para produccion (mejor rendimiento y empaquetado)
 
