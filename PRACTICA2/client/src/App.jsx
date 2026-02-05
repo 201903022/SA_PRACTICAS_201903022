@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import UserDashboard from "./pages/UserDashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
+import RegisterCompany from "./pages/admin/RegisterCompany";
+import RegisterDelivery from "./pages/admin/RegisterDelivery";
 
 function App() {
   return (
@@ -30,8 +32,25 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/register-delivery"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <RegisterDelivery />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/register-company"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <RegisterCompany />
             </ProtectedRoute>
           }
         />
