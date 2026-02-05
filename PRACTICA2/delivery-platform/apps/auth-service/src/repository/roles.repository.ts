@@ -1,5 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+type UpsertRoleWithIdInput = {
+  id: string;
+  code: string;
+  description: string;
+  is_system?: boolean;
+};
+
 
 @Injectable()
 export class RolesRepository {
@@ -31,5 +38,21 @@ export class RolesRepository {
       throw new Error('Role not found');
     }
     return role;
+  }
+  async upsertRoleWithId(input: UpsertRoleWithIdInput) {
+    return this.prismaService.roles.upsert({
+      where: { id: input.id },
+      update: {
+        code: input.code,
+        description: input.description,
+        is_system: input.is_system ?? true,
+      },
+      create: {
+        id: input.id,
+        code: input.code,
+        description: input.description,
+        is_system: input.is_system ?? true,
+      },
+    });
   }
 }

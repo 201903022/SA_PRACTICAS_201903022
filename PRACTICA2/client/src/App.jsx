@@ -22,7 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         {/* Rutas de Cliente */}
         <Route
-          path="/customer-dashboard"
+          path="/home"
           element={
             <ProtectedRoute roleRequired="CUSTOMER">
               <UserDashboard />

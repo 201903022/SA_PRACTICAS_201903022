@@ -3,6 +3,9 @@ import { validatePassword } from "../utils/validatePassword";
 import { storage } from "../utils/cookies";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX || "";
+const BASE_URL = `${API_URL}${API_PREFIX}`;
+
 export const registerUser = async (userData) => {
   if (!validatePassword(userData.password)) {
     throw new Error(
@@ -20,7 +23,7 @@ export const registerUser = async (userData) => {
     };
 
     const response = await axios.post(
-      `${API_URL}/auth/register`,
+      `${BASE_URL}/auth/register`,
       dataToBackend,
     );
 
@@ -33,10 +36,11 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/login`, {
+    const response = await axios.post(`${BASE_URL}/auth/login`, {
       email: credentials.email,
       password: credentials.password,
     });
+
     if (response.data.access_token) {
       storage.setToken("access_token", response.data.access_token);
       storage.setToken("refresh_token", JSON.stringify(response.data.user));

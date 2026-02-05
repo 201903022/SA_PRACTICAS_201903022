@@ -15,6 +15,68 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/auth-service/Dockerfile
+    container_name: auth-service
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@auth-db:5432/auth_db?schema=public"
+      JWT_ACCESS_SECRET: "change_me_access"
+      JWT_REFRESH_SECRET: "change_me_refresh"
+      JWT_ACCESS_TTL: "1d"
+      JWT_REFRESH_TTL: "14d"
+      AUTH_SERVICE_GRPC_URL: "0.0.0.0:50051"
+      ADMIN_EMAIL: "adminDelivery@admin.com"
+      ADMIN_PASSWORD: "Admin1234!"
+      ADMIN_NAME: "Admin Delivery"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - delivery-network
+    restart: unless-stopped
+    # ports:
+    #   - "50051:50051"
+
+  api-gateway:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      AUTH_SERVICE_GRPC_URL: "auth-service:50051"
+      JWT_ACCESS_SECRET: "change_me_access"
+    depends_on:
+      - auth-service
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: delivery-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api-gateway
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+networks:
+  delivery-network:
+    driver: bridge
 
 volumes:
   auth_db_data:

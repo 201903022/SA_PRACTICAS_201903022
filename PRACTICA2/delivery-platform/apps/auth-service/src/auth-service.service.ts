@@ -27,6 +27,7 @@ export class AuthServiceService {
   ) {}
 
   async onModuleInit() {
+    await this.seedRoles();
     await this.seedAdmin();
   }
   getHello(): string {
@@ -199,6 +200,38 @@ export class AuthServiceService {
       });
     } catch (error) {
       console.error('Error seeding admin user:', error);
+    }
+  }
+  private async seedRoles() {
+    const roles = [
+      {
+        id: '11111111-1111-1111-1111-111111111111',
+        code: 'CUSTOMER',
+        description: 'End user who places orders',
+        is_system: true,
+      },
+      {
+        id: '22222222-2222-2222-2222-222222222222',
+        code: 'MERCHANT',
+        description: 'Restaurant/store owner or operator',
+        is_system: true,
+      },
+      {
+        id: '33333333-3333-3333-3333-333333333333',
+        code: 'DRIVER',
+        description: 'Delivery driver',
+        is_system: true,
+      },
+      {
+        id: '44444444-4444-4444-4444-444444444444',
+        code: 'ADMIN',
+        description: 'Platform administrator',
+        is_system: true,
+      },
+    ];
+
+    for (const r of roles) {
+      await this.rolesRepo.upsertRoleWithId(r);
     }
   }
 }

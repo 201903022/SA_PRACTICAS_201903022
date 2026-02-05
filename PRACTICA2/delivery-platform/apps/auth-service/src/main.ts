@@ -10,10 +10,16 @@ import { existsSync } from 'fs';
 import { AuthServiceModule } from './auth-service.module';
 
 function resolveProtoPath() {
-  // ! 1) si existe el proto en dist (produccion / build), usa __dirname
-  const distProto = join(__dirname, '../proto/auth.proto');
+  // 1. Ruta para Producción (dentro de dist)
+  // __dirname es /usr/src/app/dist/apps/auth-service
+  const distProto = join(__dirname, 'proto/auth.proto');
   if (existsSync(distProto)) return distProto;
 
+  // 2. Ruta para Docker (basada en la copia manual que hicimos al root del dist)
+  const dockerProto = join(process.cwd(), 'proto/auth.proto');
+  if (existsSync(dockerProto)) return dockerProto;
+
+  // 3. Ruta para Desarrollo Local
   const devProto = join(process.cwd(), 'libs/common/proto/auth.proto');
   return devProto;
 }
