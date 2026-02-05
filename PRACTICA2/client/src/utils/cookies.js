@@ -28,6 +28,7 @@ export const storage = {
   clearSession: () => {
     Cookies.remove('access_token', { path: '/' });
     Cookies.remove('refresh_token', { path: '/' });
+    Cookies.remove('user', { path: '/' });
     localStorage.removeItem('user');
   }
 };

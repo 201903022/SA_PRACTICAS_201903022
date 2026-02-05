@@ -41,16 +41,26 @@ export class AuthServiceService {
       role: roleCode.code,
     };
 
+    // Obtenemos secretos y tiempos del .env
+    const accessSecret = this.configService.get<string>('JWT_ACCESS_SECRET');
+    const accessTTL = this.configService.get<string>('JWT_ACCESS_TTL') ?? '2h'; // <-- 2 Horas
+
     const refreshSecret =
       this.configService.get<string>('JWT_REFRESH_SECRET') ?? 'default_secret';
     const refreshTTL =
       this.configService.get<string>('JWT_REFRESH_TTL') ?? '7d';
-    const accessToken = await this.jwtService.signAsync(payload);
+
+    // Firmamos el Access Token con tiempo explícito
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: accessSecret,
+      expiresIn: accessTTL as any, // Asegura que dure lo suficiente
+    });
+
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: refreshSecret,
-      expiresIn: refreshTTL as never,
+      expiresIn: refreshTTL as any,
     });
-    // ! Debo retornar valid && user
+
     return {
       accessToken,
       refreshToken,
@@ -59,6 +69,7 @@ export class AuthServiceService {
 
   async validateToken(token: string) {
     try {
+      console.log('Validar TOken Auth-Service');
       const secret = this.configService.get<string>('JWT_ACCESS_SECRET');
       const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(
         token,
@@ -127,6 +138,7 @@ export class AuthServiceService {
   }
 
   async registerUser(data: RegisterDto) {
+    console.log('Registrar Usuario');
     const existingEmail = await this.usersRepo.findByEmail(data.email);
 
     if (existingEmail) {

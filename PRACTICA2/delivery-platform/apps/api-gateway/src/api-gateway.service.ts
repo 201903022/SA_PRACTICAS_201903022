@@ -14,6 +14,7 @@ export class ApiGatewayService implements OnModuleInit {
   }
 
   async validate(access_token: string) {
+    console.log('LAALDJLKDJMLKM');
     return lastValueFrom(this.auth.Validate({ access_token }));
   }
 
