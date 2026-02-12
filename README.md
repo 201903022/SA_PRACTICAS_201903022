@@ -4,6 +4,7 @@
   - [1.1. Informacion](#11-informacion)
   - [1.2. Practica 1](#12-practica-1)
   - [1.3. Practica 2](#13-practica-2)
+  - [1.4. Practica 3](#14-practica-3)
 
 ## 1.1. Informacion
 
@@ -18,3 +19,7 @@
 ## 1.3. Practica 2
 
 [Ir a practica #2](./PRACTICA1/)
+
+## 1.4. Practica 3
+
+[Ir a practica #3](./PRACTICA3/)

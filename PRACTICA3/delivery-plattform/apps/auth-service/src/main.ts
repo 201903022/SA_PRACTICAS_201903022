@@ -1,0 +1,70 @@
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import {
+  MicroserviceOptions,
+  RpcException,
+  Transport,
+} from '@nestjs/microservices';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { AuthServiceModule } from './auth-service.module';
+
+function resolveProtoPath() {
+  // 1. Ruta para Producción (dentro de dist)
+  // __dirname es /usr/src/app/dist/apps/auth-service
+  const distProto = join(__dirname, 'proto/auth.proto');
+  if (existsSync(distProto)) return distProto;
+
+  // 2. Ruta para Docker (basada en la copia manual que hicimos al root del dist)
+  const dockerProto = join(process.cwd(), 'proto/auth.proto');
+  if (existsSync(dockerProto)) return dockerProto;
+
+  // 3. Ruta para Desarrollo Local
+  const devProto = join(process.cwd(), 'libs/common/proto/auth.proto');
+  return devProto;
+}
+
+async function bootstrap() {
+  const protoPath = resolveProtoPath();
+
+  const grpcUrl = process.env.AUTH_SERVICE_GRPC_URL ?? '0.0.0.0:50051';
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AuthServiceModule,
+    {
+      transport: Transport.GRPC,
+      options: {
+        package: 'auth',
+        protoPath,
+        url: grpcUrl,
+        loader: {
+          keepCase: true,
+        },
+      },
+    },
+  );
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      exceptionFactory: (errors) => {
+        console.log('--- ERROR DE VALIDACION EN AUTH MS ---');
+        console.log(JSON.stringify(errors, null, 2));
+
+        return new RpcException({
+          code: 3, // ! INVALID_ARGUMENT
+          message: 'Validation failed',
+        });
+      },
+    }),
+  );
+
+  app.enableShutdownHooks();
+  await app.listen();
+
+  console.log(`Auth Microservice is running on ${grpcUrl}`);
+}
+
+bootstrap();

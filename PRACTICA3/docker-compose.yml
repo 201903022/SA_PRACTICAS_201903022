@@ -1,0 +1,137 @@
+services:
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+  database-general:
+    image: postgres:16
+    container_name: database-general
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: database_general
+    ports:
+      - "5433:5432"
+    volumes:
+      - database_general_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d database_general"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/auth-service/Dockerfile
+    container_name: auth-service
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@database-general:5432/database_general?schema=auth"
+      JWT_ACCESS_SECRET: "change_me_access"
+      JWT_REFRESH_SECRET: "change_me_refresh"
+      JWT_ACCESS_TTL: "1d"
+      JWT_REFRESH_TTL: "14d"
+      AUTH_SERVICE_GRPC_URL: "0.0.0.0:50051"
+      ADMIN_EMAIL: "adminDelivery@admin.com"
+      ADMIN_PASSWORD: "Admin1234!"
+      ADMIN_NAME: "Admin Delivery"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - delivery-network
+    restart: unless-stopped
+    # ports:
+    #   - "50051:50051"
+
+  api-gateway:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      AUTH_SERVICE_GRPC_URL: "auth-service:50051"
+      CATALOG_SERVICE_GRPC_URL: "catalog-service:50052"
+      ORDER_SERVICE_GRPC_URL: "orders-service:50054"
+      JWT_ACCESS_SECRET: "change_me_access"
+    depends_on:
+      - auth-service
+    networks:
+      - delivery-network
+    restart: unless-stopped
+  catalog-service:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/catalog-service/Dockerfile
+    container_name: catalog-service
+    environment:
+      DATABASE_URL_CATALOGO: "postgresql://postgres:postgres@database-general:5432/database_general?schema=catalog"
+      CATALOG_SERVICE_GRPC_URL: "0.0.0.0:50052"
+    depends_on:
+      database-general:
+        condition: service_healthy
+    networks:
+      - delivery-network
+    restart: unless-stopped
+    # ports:
+    #   - "50052:50052"
+
+  orders-service:
+    build:
+      context: ./delivery-platform
+      dockerfile: apps/orders-service/Dockerfile
+    container_name: orders-service
+    environment:
+      DATABASE_URL_ORDERS: "postgresql://postgres:postgres@database-general:5432/database_general?schema=orders"
+      ORDERS_SERVICE_GRPC_URL: "0.0.0.0:50054"
+      CATALOG_SERVICE_GRPC_URL: "catalog-service:50052"
+    depends_on:
+      database-general:
+        condition: service_healthy
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: delivery-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api-gateway
+    networks:
+      - delivery-network
+    restart: unless-stopped
+
+networks:
+  delivery-network:
+    driver: bridge
+
+volumes:
+  auth_db_data:
+  database_general_data:

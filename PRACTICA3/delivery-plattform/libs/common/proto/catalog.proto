@@ -1,0 +1,164 @@
+syntax = "proto3";
+
+package catalog;
+
+service CatalogService {
+  rpc CreateCompany (CreateCompanyRequest) returns (CreateCompanyResponse);
+  rpc Health (HealthRequest) returns (HealthResponse);
+  rpc ListRestaurants (ListRestaurantsRequest) returns (ListRestaurantsResponse);
+  rpc GetRestaurant (GetRestaurantRequest) returns (GetRestaurantResponse);
+  rpc ListMenuItemsByRestaurant (ListMenuItemsByRestaurantRequest) returns (ListMenuItemsByRestaurantResponse);
+  rpc GetRestaurantByOwnerId (GetRestaurantByOwnerIdRequest) returns (GetRestaurantByOwnerIdResponse);
+  rpc ListMerchantTypes (ListMerchantTypesRequest) returns (ListMerchantTypesResponse);
+  rpc CreateMenuItem (CreateMenuItemRequest) returns (CreateMenuItemResponse);
+  rpc UpdateMenuItem (UpdateMenuItemRequest) returns (UpdateMenuItemResponse);
+  rpc DeleteMenuItem (DeleteMenuItemRequest) returns (DeleteMenuItemResponse);
+
+
+}
+
+message ListRestaurantsRequest {
+  bool onlyActive = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message Restaurant {
+  string id = 1;
+  string name = 2;
+  string address = 3;
+  string phone = 4;
+  string alias = 5;
+  string openingHours = 6;
+  bool isActive = 7;
+  string merchantTypeId = 8;
+  string userId = 9;
+}
+
+message ListRestaurantsResponse {
+  repeated Restaurant restaurants = 1;
+}
+
+message GetRestaurantRequest {
+  string id = 1;
+}
+
+message GetRestaurantResponse {
+  Restaurant restaurant = 1;
+}
+
+message ListMenuItemsByRestaurantRequest {
+  string restaurantId = 1;
+  bool onlyAvailable = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message MenuItem {
+  string id = 1;
+  string restaurantId = 2;
+  string name = 3;
+  string description = 4;
+  double price = 5;
+  string currency = 6;
+  bool isAvailable = 7;
+}
+
+message ListMenuItemsByRestaurantResponse {
+  repeated MenuItem items = 1;
+}
+message CreateCompanyRequest {
+  string name = 1;
+  string address = 2;
+  string phone = 3;
+  string alias = 4;
+  string openingHours = 5;
+  string merchantTypeId = 6;
+
+  // lo manda el gateway desde el JWT (no desde el frontend)
+  string ownerUserId = 7;
+}
+
+message CreateCompanyResponse {
+  Restaurant restaurant = 1;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1; // "ok"
+  string service = 2; // "catalog-service"
+  int64 ts = 3; // epoch ms
+  Restaurant anyRestaurant = 4;
+}
+
+message GetRestaurantByOwnerIdRequest {
+  string ownerUserId = 1;
+  bool onlyActive = 2;
+}
+
+message GetRestaurantByOwnerIdResponse {
+  bool found = 1;
+  Restaurant restaurant = 2;
+}
+
+message ListMerchantTypesRequest {
+  bool onlyActive = 1;
+}
+
+message MerchantType {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  string description = 4;
+}
+
+message ListMerchantTypesResponse {
+  repeated MerchantType merchantTypes = 1;
+}
+message CreateMenuItemRequest {
+  // del JWT (gateway)
+  string ownerUserId = 1;
+
+  // datos del producto
+  string name = 2;
+  string description = 3; // si no viene, mandas ""
+  double price = 4;
+  string currency = 5; // default "GTQ"
+  bool isAvailable = 6; // default true
+
+  // opcional: categorias del restaurante
+  repeated string categoryIds = 7;
+}
+
+message CreateMenuItemResponse {
+  MenuItem item = 1;
+}
+
+message UpdateMenuItemRequest {
+  string ownerUserId = 1;
+  string menuItemId = 2;
+
+  // campos editables
+  string name = 3;
+  string description = 4;
+  double price = 5;
+  string currency = 6;
+  bool isAvailable = 7;
+
+  // si quieres manejar categorias por update
+  repeated string categoryIds = 8;
+}
+
+message UpdateMenuItemResponse {
+  MenuItem item = 1;
+}
+
+message DeleteMenuItemRequest {
+  string ownerUserId = 1;
+  string menuItemId = 2;
+}
+
+message DeleteMenuItemResponse {
+  bool deleted = 1;
+}

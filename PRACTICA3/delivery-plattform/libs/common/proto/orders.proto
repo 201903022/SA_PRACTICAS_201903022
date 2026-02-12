@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package orders;
+
+service OrdersService {
+  rpc Health (HealthRequest) returns (HealthResponse);
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
+
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string service = 2;
+  int64 ts = 3;
+}
+message OrderItemInput {
+  string menuItemId = 1;
+  int32 quantity = 2;
+  double expectedPrice = 3; // Opcional, para validación adicional en el backend
+}
+
+message CreateOrderRequest {
+  string customerUserId = 1; // del JWT en gateway
+  string restaurantId = 2;
+  repeated OrderItemInput items = 3;
+  string notes = 4;
+  string deliveryAddress = 5;
+}
+
+message CreateOrderResponse {
+  string orderId = 1;
+  string status = 2; // PENDING
+  double subtotal = 3;
+  string currency = 4;
+}
